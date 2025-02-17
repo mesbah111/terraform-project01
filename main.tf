@@ -15,8 +15,8 @@ data "aws_availability_zones" "available" {
 ### VPC
 
 resource "aws_vpc" "terraform_vpc" {
-  cidr_block = var.vpc_cidr
-  enable_dns_support = true
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
@@ -29,10 +29,10 @@ resource "aws_vpc" "terraform_vpc" {
 ### Public Subnets
 
 resource "aws_subnet" "terraform_public_subnet_1" {
-  availability_zone = data.aws_availability_zones.available.names[0]
-  cidr_block = var.public_subnet_1_cidr
+  availability_zone       = data.aws_availability_zones.available.names[0]
+  cidr_block              = var.public_subnet_1_cidr
   map_public_ip_on_launch = true
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id                  = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-public-subnet01"
   }
@@ -42,10 +42,10 @@ resource "aws_subnet" "terraform_public_subnet_1" {
 
 
 resource "aws_subnet" "terraform_public_subnet_2" {
-  availability_zone = data.aws_availability_zones.available.names[1]
-  cidr_block = var.public_subnet_2_cidr
+  availability_zone       = data.aws_availability_zones.available.names[1]
+  cidr_block              = var.public_subnet_2_cidr
   map_public_ip_on_launch = true
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id                  = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-public-subnet02"
   }
@@ -56,10 +56,10 @@ resource "aws_subnet" "terraform_public_subnet_2" {
 
 
 resource "aws_subnet" "terraform_public_subnet_3" {
-  availability_zone = data.aws_availability_zones.available.names[2]
-  cidr_block = var.public_subnet_3_cidr
+  availability_zone       = data.aws_availability_zones.available.names[2]
+  cidr_block              = var.public_subnet_3_cidr
   map_public_ip_on_launch = true
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id                  = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-public-subnet03"
   }
@@ -72,8 +72,8 @@ resource "aws_subnet" "terraform_public_subnet_3" {
 
 resource "aws_subnet" "terraform_private_subnet_1" {
   availability_zone = data.aws_availability_zones.available.names[0]
-  cidr_block = var.private_subnet_1_cidr
-  vpc_id = aws_vpc.terraform_vpc.id
+  cidr_block        = var.private_subnet_1_cidr
+  vpc_id            = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-private-subnet-01"
   }
@@ -83,8 +83,8 @@ resource "aws_subnet" "terraform_private_subnet_1" {
 
 resource "aws_subnet" "terraform_private_subnet_2" {
   availability_zone = data.aws_availability_zones.available.names[1]
-  cidr_block = var.private_subnet_2_cidr
-  vpc_id = aws_vpc.terraform_vpc.id
+  cidr_block        = var.private_subnet_2_cidr
+  vpc_id            = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-private-subnet02"
   }
@@ -94,8 +94,8 @@ resource "aws_subnet" "terraform_private_subnet_2" {
 
 resource "aws_subnet" "terraform_private_subnet_3" {
   availability_zone = data.aws_availability_zones.available.names[2]
-  cidr_block = var.private_subnet_3_cidr
-  vpc_id = aws_vpc.terraform_vpc.id
+  cidr_block        = var.private_subnet_3_cidr
+  vpc_id            = aws_vpc.terraform_vpc.id
   tags = {
     Name = "${var.project_name}-private-subnet03"
   }
@@ -155,14 +155,14 @@ resource "aws_route_table_association" "terraform_public_subnet03_rtb_assoc" {
 ### Elastic IP 1
 
 resource "aws_eip" "terraform_eip01" {
-  depends_on                = [aws_internet_gateway.terraform_igw]
+  depends_on = [aws_internet_gateway.terraform_igw]
 }
 
 
 ### Elastic IP 2
 
 resource "aws_eip" "terraform_eip02" {
-  depends_on                = [aws_internet_gateway.terraform_igw]
+  depends_on = [aws_internet_gateway.terraform_igw]
 }
 
 
@@ -300,8 +300,8 @@ resource "aws_route_table_association" "terraform_private_subnet03_rtb_assoc" {
 ### Bastion Host AMI Data
 
 data "aws_ami" "terraform_bastion_ami" {
-  most_recent      = true
-  owners           = ["amazon"]
+  most_recent = true
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
@@ -318,7 +318,7 @@ data "aws_ami" "terraform_bastion_ami" {
     values = ["hvm"]
   }
 
- 
+
   filter {
     name   = "architecture"
     values = ["x86_64"]
@@ -370,11 +370,11 @@ resource "aws_key_pair" "terraform_bastion_keypair" {
 ### Bastion Host EC2 Instance
 
 resource "aws_instance" "terraform_bastion_host" {
-  ami           = data.aws_ami.terraform_bastion_ami.id
-  instance_type = var.instance_type
-  subnet_id = aws_subnet.terraform_public_subnet_1.id
+  ami                    = data.aws_ami.terraform_bastion_ami.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.terraform_public_subnet_1.id
   vpc_security_group_ids = [aws_security_group.terraform_bastion_sg.id]
-  key_name = aws_key_pair.terraform_bastion_keypair.key_name
+  key_name               = aws_key_pair.terraform_bastion_keypair.key_name
   tags = {
     Name = "${var.project_name}-bastion-host"
   }
